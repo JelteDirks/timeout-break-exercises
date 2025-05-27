@@ -1,0 +1,16 @@
+{
+  "author": {
+    "name": "Jelte Dirks",
+    "email": "",
+    "url": "https://github.com/JelteDirks/timeout-break-exercises"
+  },
+  "type" : "html5",
+  "comments": "Short exercises for long sessions.",
+  "rootDocument": "index.html",
+  "created": "27-05-2025",
+  "identifier": "short-exercises",
+  "version": 0.1,
+  "modified": "27-05-2025",
+  "name": "Short Exercises"
+}
+
