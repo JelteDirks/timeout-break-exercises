@@ -61,9 +61,6 @@ const default_exercises = [
   }
 ];
 
-const exName = "exercises";
-const maxName = "maxItems";
-
 function swap(arr, i, j) {
   const temporary = arr[i];
   arr[i] = arr[j];
@@ -71,26 +68,42 @@ function swap(arr, i, j) {
 }
 
 function getRandomExercise() {
-  let maxItems = Number.parseInt(localStorage.getItem(maxName));
-  if (!maxItems || maxItems <= 0) {
+  let maxItems = parseInt(localStorage.getItem("maxItem") || default_exercises.length);
+  if (maxItems <= 0) {
     maxItems = default_exercises.length;
   }
-  
-  const ex = localStorage.getItem(exName);
-  if (!ex) {
-    localStorage.setItem(exName, JSON.stringify(default_exercises));
+
+  let exercises;
+  try {
+    exercises = JSON.parse(localStorage.getItem("exercises"));
+  } catch (e) {
+    exercises = default_exercises;
   }
 
   const randomIndex = Math.floor(Math.random() * maxItems);
-  const exercises = JSON.parse(localStorage.getItem(exName));
 
   --maxItems;
   swap(exercises, randomIndex, maxItems);
 
-  localStorage.setItem(exName, JSON.stringify(exercises));
-  localStorage.setItem(maxName, maxItems);
+  localStorage.setItem("exercises", JSON.stringify(exercises));
+  localStorage.setItem("maxItem", maxItems.toString());
+
+  setHistory(exercises[maxItems].name);
+
+  console.log(localStorage.getItem("history"));
 
   return exercises[maxItems];
+}
+
+function setHistory(v) {
+  let history;
+  try {
+    history = JSON.parse(localStorage.getItem("history"));
+  } catch (e) {
+    history = []
+  }
+  history.push(v);
+  localStorage.setItem("history", JSON.stringify(history));
 }
 
 function displayExercise(exercise) {
@@ -103,7 +116,6 @@ function getNewExercise() {
   displayExercise(exercise);
 }
 
-// Display a random exercise when the page loads
 window.addEventListener('load', () => {
   getNewExercise();
 });
