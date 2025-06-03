@@ -75,9 +75,10 @@ function getRandomExercise() {
 
   let exercises;
   try {
-    exercises = JSON.parse(localStorage.getItem("exercises"));
+    exercises = JSON.parse(localStorage.getItem("exercises") || default_exercises);
   } catch (e) {
-    exercises = default_exercises;
+    showError(e);
+    exercises = [...default_exercises];
   }
 
   const randomIndex = Math.floor(Math.random() * maxItems);
@@ -88,22 +89,7 @@ function getRandomExercise() {
   localStorage.setItem("exercises", JSON.stringify(exercises));
   localStorage.setItem("maxItem", maxItems.toString());
 
-  setHistory(exercises[maxItems].name);
-
-  console.log(localStorage.getItem("history"));
-
   return exercises[maxItems];
-}
-
-function setHistory(v) {
-  let history;
-  try {
-    history = JSON.parse(localStorage.getItem("history"));
-  } catch (e) {
-    history = []
-  }
-  history.push(v);
-  localStorage.setItem("history", JSON.stringify(history));
 }
 
 function displayExercise(exercise) {
@@ -116,6 +102,30 @@ function getNewExercise() {
   displayExercise(exercise);
 }
 
+function showLog(error) {
+  const logBox = document.getElementById("logs");
+  logBox.textContent = logBox.textContent + "\n" + formatError(error);
+  logBox.hidden = false;
+}
+
+function showError(error) {
+  const errorBox = document.getElementById("errors");
+  errorBox.textContent = formatError(error);
+  errorBox.hidden = false;
+}
+
+function formatError(error) {
+  if (typeof error === "string") return error;
+  if (error instanceof Error) {
+    return `Error: ${error.message}\n\nStack Trace:\n${error.stack}`;
+  }
+  return JSON.stringify(error, null, 2);
+}
+
 window.addEventListener('load', () => {
-  getNewExercise();
+  try {
+    getNewExercise();
+  } catch (e) {
+    showError(e);
+  }
 });
