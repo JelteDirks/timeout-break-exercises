@@ -1,4 +1,4 @@
-const exercises = [
+const default_exercises = [
   {
     name: "Desk Push-ups",
     description: "Place hands on desk edge, step back, and do 10-15 push-ups against the desk."
@@ -61,9 +61,36 @@ const exercises = [
   }
 ];
 
+const exName = "exercises";
+const maxName = "maxItems";
+
+function swap(arr, i, j) {
+  const temporary = arr[i];
+  arr[i] = arr[j];
+  arr[j] = temporary;
+}
+
 function getRandomExercise() {
-  const randomIndex = Math.floor(Math.random() * exercises.length);
-  return exercises[randomIndex];
+  let maxItems = Number.parseInt(localStorage.getItem(maxName));
+  if (!maxItems || maxItems <= 0) {
+    maxItems = default_exercises.length;
+  }
+  
+  const ex = localStorage.getItem(exName);
+  if (!ex) {
+    localStorage.setItem(exName, JSON.stringify(default_exercises));
+  }
+
+  const randomIndex = Math.floor(Math.random() * maxItems);
+  const exercises = JSON.parse(localStorage.getItem(exName));
+
+  --maxItems;
+  swap(exercises, randomIndex, maxItems);
+
+  localStorage.setItem(exName, JSON.stringify(exercises));
+  localStorage.setItem(maxName, maxItems);
+
+  return exercises[maxItems];
 }
 
 function displayExercise(exercise) {
@@ -77,6 +104,6 @@ function getNewExercise() {
 }
 
 // Display a random exercise when the page loads
-window.addEventListener('load', function() {
+window.addEventListener('load', () => {
   getNewExercise();
 });
